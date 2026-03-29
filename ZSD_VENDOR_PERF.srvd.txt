@@ -1,0 +1,4 @@
+@EndUserText.label: 'Vendor Performance Service'
+define service ZSD_VENDOR_PERF {
+  expose ZC_VENDOR_PERFORMANCE as VendorPerformance;
+}

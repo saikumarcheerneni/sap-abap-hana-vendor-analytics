@@ -1,0 +1,67 @@
+CLASS zcl_vendor_kpi_amdp DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    INTERFACES if_amdp_marker_hdb.
+
+    TYPES: BEGIN OF ty_vendor_kpi,
+             lifnr       TYPE lfa1-lifnr,
+             name1       TYPE lfa1-name1,
+             land1       TYPE lfa1-land1,
+             total_pos   TYPE i,
+             ontime_dels TYPE i,
+             late_dels   TYPE i,
+           END OF ty_vendor_kpi.
+
+    TYPES tt_vendor_kpi TYPE TABLE OF ty_vendor_kpi.
+
+    CLASS-METHODS get_vendor_kpis
+      IMPORTING
+        VALUE(iv_bukrs) TYPE bukrs
+      EXPORTING
+        VALUE(et_kpis)  TYPE tt_vendor_kpi
+      RAISING
+        cx_amdp_error.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zcl_vendor_kpi_amdp IMPLEMENTATION.
+
+  METHOD get_vendor_kpis
+      BY DATABASE PROCEDURE FOR HDB
+      LANGUAGE SQLSCRIPT
+      OPTIONS READ-ONLY
+      USING lfa1 ekko ekpo eket.
+
+    DECLARE lv_bukrs NVARCHAR(4);
+    lv_bukrs := :iv_bukrs;
+
+    et_kpis = SELECT
+        l.lifnr,
+        l.name1,
+        l.land1,
+        COUNT(DISTINCT e.ebeln)  AS total_pos,
+        SUM( CASE
+               WHEN et.eindt >= CURRENT_DATE
+               THEN 1 ELSE 0
+             END )               AS ontime_dels,
+        SUM( CASE
+               WHEN et.eindt < CURRENT_DATE
+               THEN 1 ELSE 0
+             END )               AS late_dels
+      FROM ekko AS e
+      INNER JOIN lfa1 AS l  ON e.lifnr = l.lifnr
+      INNER JOIN ekpo AS ep ON e.ebeln = ep.ebeln
+      INNER JOIN eket AS et ON ep.ebeln = et.ebeln
+                           AND ep.ebelp = et.ebelp
+      WHERE e.bukrs = :lv_bukrs
+      GROUP BY l.lifnr, l.name1, l.land1
+      ORDER BY total_pos DESCENDING;
+
+  ENDMETHOD.
+
+ENDCLASS.

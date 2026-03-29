@@ -1,0 +1,33 @@
+@AbapCatalog.sqlViewName: 'ZCV_VENDOR_PERF'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Vendor Performance Consumption View'
+
+@UI.headerInfo: {
+  typeName:       'Vendor',
+  typeNamePlural: 'Vendors',
+  title:          { type: #STANDARD, value: 'VendorName' }
+}
+
+@Search.searchable: true
+
+define view ZC_VENDOR_PERFORMANCE
+  as select from ZI_VENDOR_PERFORMANCE
+{
+      @Search.defaultSearchElement: true
+      @UI.lineItem:       [{ position: 10, label: 'Vendor' }]
+      @UI.selectionField: [{ position: 10 }]
+  key Vendor,
+
+      @UI.lineItem:       [{ position: 20, label: 'Vendor Name' }]
+      @Search.defaultSearchElement: true
+      VendorName,
+
+      @UI.lineItem:       [{ position: 30, label: 'Country' }]
+      @UI.selectionField: [{ position: 20 }]
+      Country,
+
+      @UI.lineItem:       [{ position: 40, label: 'Account Group' }]
+      AccountGroup
+}
