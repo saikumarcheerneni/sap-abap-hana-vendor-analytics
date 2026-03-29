@@ -35,6 +35,6 @@ SAP Fiori Launchpad
 ABAP 754 · SAP HANA 2.0 · CDS Views · AMDP · OData · SAP Fiori
 
 ## Screenshots
-![ADT Package](screenshots/01_adt_package.png)
-![OData Metadata](screenshots/02_odata_metadata.png)
-![Fiori Launchpad](screenshots/03_fiori_launchpad.png)
+![ADT Package](01_adt_package.png)
+![OData Metadata](02_odata_metadata.png)
+![Fiori Launchpad](03_fiori_launchpad.png)
